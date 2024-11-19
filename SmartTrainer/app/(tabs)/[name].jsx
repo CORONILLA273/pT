@@ -3,13 +3,45 @@ import { useLocalSearchParams } from 'expo-router'
 import exercises from './../../assets/data/exercises.json'
 import { Stack } from 'expo-router'
 import { useState } from 'react'
+import { gql, useQuery } from "@apollo/client"
 
+const exerciseQuery = gql `
+    query exercises($name: String) {
+        exercises(name: $name){
+            name
+            muscle
+            instructions
+            equipment
+        }
+    }
+`
 export default function ExerciseDetailScreen() {
     const params = useLocalSearchParams()
+    const name = params.name
+
+    const {data, isLoading, error} = useQuery(
+        exerciseQuery,
+        {
+            variables: {name: name},
+        }
+    )
 
     const [isInstructionExpanded, setIsInstructionExpanded] = useState(false)
 
-    const exercise = exercises.find((item) => item.name == params.name)
+    if (isLoading) {
+        return <ActivityIndicator />
+    }
+
+    if (error) {
+        console.log(error)
+        return <Text>Fallo al cargar los ejercicios</Text>
+    }
+
+    if (!data || !data.exercises) {
+        return <Text>No exercises found</Text>;
+    }
+
+    const exercise = data.exercises[0]
 
     if(!exercise) {
         return <Text>Exercise not found</Text>
