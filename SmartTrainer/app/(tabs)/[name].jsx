@@ -4,6 +4,7 @@ import exercises from './../../assets/data/exercises.json'
 import { Stack } from 'expo-router'
 import { useState } from 'react'
 import { gql, useQuery } from "@apollo/client"
+import NewSetInput from "./../../components/NewSetInput"
 
 const exerciseQuery = gql `
     query exercises($name: String) {
@@ -64,7 +65,9 @@ export default function ExerciseDetailScreen() {
                 <Text onPress={() => setIsInstructionExpanded(!isInstructionExpanded)} style={styles.seeMore}>
                     {isInstructionExpanded  ? 'See Less' : 'See More'}
                 </Text>
-            </View>        
+            </View>  
+
+            <NewSetInput/>   
         </ScrollView>
     )
 }
